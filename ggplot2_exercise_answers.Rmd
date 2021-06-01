@@ -1,0 +1,112 @@
+---
+title: "ggplot2_exercise_answers"
+author: "Ayanda Oluwaseyi"
+date: "4/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#2.2.1
+1. glimpse(), str(), names(), dim(), ncol(), nrow(), is.na()
+2. data(package="ggplot2")
+3. 
+4. Manufacturer with most models 
+```{r}
+manufacturer_most_model <- unique(mpg[c("model","manufacturer")])
+    sort(table(manufacturer_most_model$manufacturer),decreasing = T)
+```
+
+model with most variation
+```{r}
+model_variation <- unique(mpg[c("model","class","drv")])
+head(sort(table(model_variation$model),decreasing = TRUE))
+```
+
+Does your answer change if you remove the redundant
+specification of drive train (e.g. “pathfinder 4wd”, “a4 quattro”)
+from the model name?
+```{r}
+model_variation2 <- model_variation
+model_variation2$model <- gsub(" 4wd$| quattro| 2wd| awd","",model_variation2$model)
+head(sort(table(model_variation2$model),decreasing = TRUE))
+```
+
+#2.3.1
+1. To describe the relationship a plot btw cty and hwy is required
+```{r}
+ggplot(mpg,aes(cty,hwy))+
+    geom_point()
+```
+There appears to be a positive linear relationship, my concern lies with overplotting of points which could be overcomed by adding some transparency to plot.
+
+2. ggplot(mpg, aes(model, manufacturer)) + geom point() shows a plot of model against manufacturer, not really useful, a logical way to make the plot informative is to format the name and rotate the x axis label(model) by 45 degrees.
+
+3. 
+
+#2.4.1
+1. From experimenting with the variables, 
+ggplot(mpg, aes(displ,cty,shape=cyl)) + geom_point(),
+A continuous variable cannot be mapped to shape, because there is limited number of shapes that can be assumed by a continuous variable.
+
+Using size is not advised for mapping a categorical variable, because it is not very informative.
+
+When you use more than one aesthetic in a plot, ggplot2 combines them if they are rightly mapped to the variable types.
+
+2. A continuous variable cannot be mapped to shape, because there is limited number of shapes that can be assumed by a continuous variable.
+
+When trans is mapped to shape not all the variables values are mapped, only six are mapped. 
+Though trans is a discrete variable it has more than the maximum number of discrete variable values (6) that can be mapped successfully. 
+
+3. How is drive train related to fuel economy 
+    ggplot(mpg, aes(drv,cty)) + geom_point()
+    ggplot(mpg, aes(drv,cty)) + geom_jitter(), add a little noise to the        data because of overplotting.
+we see that the front wheel (f) favours or have high fuel economy
+
+How is drive train related to engine size and class?
+    ggplot(mpg,aes(drv,displ,colour=class))+geom_point()
+    ggplot(mpg,aes(drv,displ,colour=class))+geom_jitter()
+We see the front wheel (f) have smaller engine size and the rear wheel have a bigger engine size. Also the subcompact and 2seater class have smaller and higher engine size when compared with their averages.
+
+#2.5.1 Exercises
+1. Facetting by a continuous variable like hwy does not give any information about the data set.
+ggplot(mpg,aes(displ,cyl))+geom_point()+facet_wrap(~hwy)
+
+facetting by a categorical variable like cyl is much more informative
+ggplot(mpg,aes(displ,hwy))+geom_point()+facet_wrap(~cyl)
+
+2. The relationship between fuel economy and engine size was only appears to be negative and linear, but by facetting with the number of cylinders, we see an associated relationship with the cylinder size, engine size and fuel economy.
+
+3. Arguments nrow and ncol control how many rows and columns appear in the output.
+
+4. scales argument control the x and y axis labels.
+
+#2.6.6 Exercise
+1. Overplotting, because there are few unique values for the variable plotted
+geom_jitter will remediate this problem by adding a little noise to the plot.
+2. Use reorder() to change the factor level, other methods that reorder according to the median exists. check stackoverflow for that
+use ?reorder for documentation on that, but it basically reoder its first argument based on the second (using frequency calculation of second variable)
+3. ggplot(diamonds,aes(carat))+geom_histogram(binwidth=.5)
+4. ggplot(diamonds,aes(price,colour=cut))+geom_freqpoly()
+We see that more ideal cut are available at lesser price when compared other cut types.
+5. The strength and weakenesses are described in section 2.6,
+6. The weight aesthetic in geom_bar makes the height of the bar proportional to the sum of the weights in each group e.g ggplot(mpg,aes(manufacturer))+geom_bar(aes(weight=cyl))
+7.Remember its a creative art as much as its science
+
+#3.2.1
+1.What geoms would you use to draw each of the following named plots
+1. Scatterplot <- geom_point()
+2. Line chart <- geom_line()
+3. Histogram <- geom_histogram()
+4. Bar chart <- geom_bar()
+5. Pie chart <- geom_bar with polar coordinates
+
+2. geom_path is a line plot without fill, while geom_polygon() is a path plot with fill. i.e geom_polygon is basically a path plot with the fill property
+3. What low-level geoms are used to draw 
+geom_smooth() <- geom_line
+geom_boxplot() <- geom_rect()
+geom_violin() <- geom_rect() and geom_density
+
+
+
